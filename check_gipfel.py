@@ -2,7 +2,14 @@ import os
 import requests
 
 URL = "https://diegipfelstuermer.org/collections/fussballkindergarten"
-SEARCH_TEXT = "Jahrgang 2022"
+
+KEYWORDS = [
+    "Jahrgang 2022",
+    "Warteliste Jahrgang 2022",
+    "Fußballkindergarten 26/27",
+    "Anmeldung Jahrgang 2022",
+    "Warteliste 2022"
+]
 
 def send_telegram(message):
     token = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -28,13 +35,15 @@ def main():
     page = response.text
     print("Page length:", len(page))
 
-    if SEARCH_TEXT in page:
-        print("FOUND Jahrgang 2022!")
-        send_telegram(
-            f"🎉 Anmeldung offenbar offen: '{SEARCH_TEXT}' gefunden!\n{URL}"
-        )
-    else:
-        print("Not found yet.")
+    for word in KEYWORDS:
+        if word in page:
+            print("FOUND:", word)
+            send_telegram(
+                f"🎉 Mögliche Anmeldung gefunden:\n'{word}'\n{URL}"
+            )
+            return
+
+    print("Nothing found yet.")
 
 if __name__ == "__main__":
     main()
