@@ -1,0 +1,26 @@
+name: Monitor Gipfelstuermer Jahrgang 2022
+
+on:
+  schedule:
+    - cron: "0 7,12,18 * * *"  # 07:00/12:00/18:00 UTC (DE +1/+2 Stunden)
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Run check
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python check_gipfel.py
